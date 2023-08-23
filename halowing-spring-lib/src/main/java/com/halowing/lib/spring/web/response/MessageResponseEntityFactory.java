@@ -5,58 +5,43 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.MessageSourceAccessor;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+
+import com.halowing.lib.spring.context.support.MessageSourceFactory;
 
 @Component
 public class MessageResponseEntityFactory {
 	
 	private final MessageSourceAccessor messageSourceAccessor;
 	
-	private static final String CREATED = "response.success.created";
-
-	private static final String DELETED = "response.success.deleted";
-	
-	private static final String UPDATED = "response.success.updated";
-	
-	private static final ReloadableResourceBundleMessageSource defaultMessageSource = new ReloadableResourceBundleMessageSource();
-	
-	static {
-		defaultMessageSource.setBasename("classpath:messages/response");
-		defaultMessageSource.setDefaultEncoding("UTF-8");
-		defaultMessageSource.setCacheSeconds(60);
-	}
-	
-	public MessageResponseEntityFactory(@Autowired MessageSource messageSource) {
+	public MessageResponseEntityFactory() {
 		
-		if(messageSource == null || messageSource.getMessage(CREATED, null, "" , Locale.getDefault()).equals("") )
-			messageSource = defaultMessageSource;
+		MessageSource messageSource = MessageSourceFactory.getMessageSource();
 		
 		this.messageSourceAccessor = new MessageSourceAccessor(messageSource) ;
 	}
 	
 	public ResponseEntity<MessageResponse> created(Locale locale){
 		
-		String message = messageSourceAccessor.getMessage(CREATED,  locale);
+		String message = messageSourceAccessor.getMessage(HttpMessageCode.CREATED.getMessageCode(),  locale);
 		
 		return new ResponseEntity<MessageResponse>(new SimpleMessageResponse(message),HttpStatus.CREATED) ;
 	}
 	
 	public ResponseEntity<MessageResponse> deleted(Locale locale){
 		
-		String message = messageSourceAccessor.getMessage(DELETED,  locale);
+		String message = messageSourceAccessor.getMessage(HttpMessageCode.DELETED.getMessageCode(),  locale);
 		
 		return ResponseEntity.ok(new SimpleMessageResponse(message)) ;
 	}
 	
 	public ResponseEntity<MessageResponse> updated(Locale locale){
 		
-		String message = messageSourceAccessor.getMessage(UPDATED,  locale);
+		String message = messageSourceAccessor.getMessage(HttpMessageCode.UPDATED.getMessageCode(),  locale);
 		
 		return ResponseEntity.ok(new SimpleMessageResponse(message)) ;
 	}

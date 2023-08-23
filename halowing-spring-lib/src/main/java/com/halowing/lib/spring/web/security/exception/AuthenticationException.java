@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 
 import com.halowing.lib.spring.security.LoginUser;
 import com.halowing.lib.spring.web.exception.AbstractSpringWebApplicationException;
+import com.halowing.lib.spring.web.response.HttpMessageCode;
 
 /**
  * Login 실패 에러 처리
@@ -11,8 +12,6 @@ import com.halowing.lib.spring.web.exception.AbstractSpringWebApplicationExcepti
 public class AuthenticationException extends AbstractSpringWebApplicationException {
 
 	private static final long serialVersionUID = -2486241735160690747L;
-	
-	public static final String UNAUTHENTICATED_ERROR_CODE = "http.status.unauthenticated";
 	
 	private static final String UNKNOWN_USER = "unknown user";
 	
@@ -23,17 +22,17 @@ public class AuthenticationException extends AbstractSpringWebApplicationExcepti
 	private final String[] args;
 	
 	public AuthenticationException(LoginUser loginUser ) {
-		super(getConstructMessage(UNAUTHENTICATED_ERROR_CODE,getArgs(loginUser) ) );
+		super(getConstructMessage(HttpMessageCode.UNAUTHENTICATED,getArgs(loginUser) ) );
 		this.httpStatus = HttpStatus.UNAUTHORIZED;
-		this.errorCode  = UNAUTHENTICATED_ERROR_CODE;
+		this.errorCode  = HttpMessageCode.UNAUTHENTICATED.getMessageCode();
 		this.loginUser = loginUser;
 		this.args = getArgs(loginUser);
 	}
 	
 	public AuthenticationException(String username ) {
-		super(getConstructMessage(UNAUTHENTICATED_ERROR_CODE, getArgs(username) ) );
+		super(getConstructMessage(HttpMessageCode.UNAUTHENTICATED, getArgs(username) ) );
 		this.httpStatus = HttpStatus.UNAUTHORIZED;
-		this.errorCode  = UNAUTHENTICATED_ERROR_CODE;
+		this.errorCode  = HttpMessageCode.UNAUTHENTICATED.getMessageCode();
 		this.loginUser = getLoginUser(username);
 		this.args = getArgs(username);
 	}
