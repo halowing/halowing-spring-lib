@@ -1,6 +1,9 @@
 package com.halowing.lib.spring.security;
 
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -19,7 +22,7 @@ public class LoginUser {
 	private String username;
 	
 	@NotNull
-	private String[] roles;
+	private Set<String> roles = new ConcurrentSkipListSet<String>();
 	
 	@URL
 	private String imageUrl;
@@ -29,9 +32,29 @@ public class LoginUser {
 
 	@Override
 	public String toString() {
-		return "LoginUser [username=" + username + ", roles=" + Arrays.toString(roles) + ", imageUrl=" + imageUrl
-				+ ", profileUrl=" + profileUrl + "]";
+		return "LoginUser [username=" + username + ", roles=" + roles + ", imageUrl=" + imageUrl + ", profileUrl="
+				+ profileUrl + "]";
 	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(roles, username);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LoginUser other = (LoginUser) obj;
+		return Objects.equals(roles, other.roles) && Objects.equals(username, other.username);
+	}
+
+
+
 
 	public String getUsername() {
 		return username;
@@ -41,11 +64,11 @@ public class LoginUser {
 		this.username = username;
 	}
 
-	public String[] getRoles() {
+	public Set<String> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(String[] roles) {
+	public void setRoles(Set<String> roles) {
 		this.roles = roles;
 	}
 
