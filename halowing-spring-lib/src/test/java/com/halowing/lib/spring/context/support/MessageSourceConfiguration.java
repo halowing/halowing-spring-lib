@@ -17,7 +17,7 @@ public class MessageSourceConfiguration {
     MessageSource messageSource() {
 		log.debug("MessageSource inited.");
 		ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
-		ms.setBasenames("classpath:/messages/response");
+		ms.setBasenames("classpath:/messages/messages");
 		ms.setDefaultEncoding("UTF-8");
 //		ms.setFallbackToSystemLocale(false);
 		return ms;

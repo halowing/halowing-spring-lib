@@ -13,7 +13,8 @@ public class MessageSourceFactory {
 
 	private static final Logger log = LoggerFactory.getLogger(MessageSourceFactory.class);
 	
-	private static final String basename = "classpath:/messages/response";
+	private static final String[] basenames = new String[] 
+			{"classpath:/messages/messages", "classpath:/messages/http"} ;
 	
 	private static MessageSource messageSource = null;
 	
@@ -31,9 +32,9 @@ public class MessageSourceFactory {
 	private static MessageSource defaultMessageSource() {
 		
 		ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
-		ms.setBasename(basename);
+		ms.setBasenames(basenames);
 		ms.setDefaultEncoding("UTF-8");
-		ms.setFallbackToSystemLocale(false);
+		ms.setCacheSeconds(60);
 		return ms;
 	}
 
@@ -42,7 +43,7 @@ public class MessageSourceFactory {
 		if(messageSource != null)
 			return messageSource;
 		
-		synchronized (basename) {
+		synchronized (basenames) {
 			if(messageSource != null)
 				return messageSource;
 			

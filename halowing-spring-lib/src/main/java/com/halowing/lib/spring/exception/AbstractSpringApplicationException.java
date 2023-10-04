@@ -5,6 +5,7 @@ import java.util.Locale;
 import org.springframework.context.support.MessageSourceAccessor;
 
 import com.halowing.lib.spring.context.support.MessageSourceFactory;
+import com.halowing.lib.spring.web.response.HttpMessageCode;
 
 public abstract class AbstractSpringApplicationException extends RuntimeException {
 
@@ -24,7 +25,12 @@ public abstract class AbstractSpringApplicationException extends RuntimeExceptio
 		super(message, cause);
 	}
 
-
+	protected static String getConstructMessage(HttpMessageCode messageCode, String... args) {
+		
+		MessageSourceAccessor msa = new MessageSourceAccessor(MessageSourceFactory.getMessageSource()) ;
+		Locale locale = Locale.US;
+		return msa.getMessage(messageCode.getMessageCode(), args, locale);
+	}
 	
 	protected static String getConstructMessage(String errorCode, String... args) {
 		
