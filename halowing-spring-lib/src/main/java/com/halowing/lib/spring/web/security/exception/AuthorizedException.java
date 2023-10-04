@@ -1,5 +1,7 @@
 package com.halowing.lib.spring.web.security.exception;
 
+import java.util.Set;
+
 import org.springframework.http.HttpStatus;
 
 import com.halowing.lib.spring.security.LoginUser;
@@ -29,7 +31,7 @@ public class AuthorizedException extends AbstractSpringWebApplicationException {
 		this.args = getArgs(loginUser);
 	}
 	
-	public AuthorizedException(String username, String... roles ) {
+	public AuthorizedException(String username, Set<String> roles ) {
 		super(getConstructMessage(HttpMessageCode.UNAUTHORIZED, getArgs(username, roles) ) );
 		this.httpStatus = HttpStatus.UNAUTHORIZED;
 		this.errorCode  = HttpMessageCode.UNAUTHORIZED.getMessageCode();
@@ -38,7 +40,7 @@ public class AuthorizedException extends AbstractSpringWebApplicationException {
 	}
 	
 	
-	private static String[] getArgs(String username, String... roles) {
+	private static String[] getArgs(String username, Set<String> roles) {
 		if(username == null || username.isBlank())
 			return new String[]{UNKNOWN_USER};
 		
@@ -56,7 +58,7 @@ public class AuthorizedException extends AbstractSpringWebApplicationException {
 		return sb.toString().split(",");
 	}
 	
-	private static LoginUser getLoginUser(String username, String... roles) {
+	private static LoginUser getLoginUser(String username, Set<String> roles) {
 		LoginUser u = new LoginUser();
 		
 		if(username == null || username.isBlank())
