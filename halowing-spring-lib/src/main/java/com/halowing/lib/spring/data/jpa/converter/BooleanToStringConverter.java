@@ -1,8 +1,7 @@
 package com.halowing.lib.spring.data.jpa.converter;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
-
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 @Converter
 public class BooleanToStringConverter implements AttributeConverter<Boolean, String> {

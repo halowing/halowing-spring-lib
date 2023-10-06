@@ -1,9 +1,9 @@
 package com.halowing.lib.spring.security;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-
 import org.springframework.validation.annotation.Validated;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * 로그인한 User의 정보

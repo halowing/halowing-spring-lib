@@ -2,10 +2,10 @@ package com.halowing.lib.spring.data.jpa.converter;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
-
 import com.halowing.lib.date.DateTimeUtility;
+
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 
 @Converter
