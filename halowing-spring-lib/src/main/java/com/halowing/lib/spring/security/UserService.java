@@ -2,7 +2,10 @@ package com.halowing.lib.spring.security;
 
 public interface UserService {
 
-	LoginUser getLoginUser(String userId);
+	LoginUser getLoginUser(String username);
 	
-	User getUser(String userId);
+	User getUser(String username);
+
+	void lockAccount(String username);
+	
 }
