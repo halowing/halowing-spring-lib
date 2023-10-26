@@ -2,10 +2,11 @@ package com.halowing.lib.spring.security;
 
 public interface UserService {
 
-	LoginUser getLoginUser(String username);
-	
-	User getUser(String username);
-
+	/**
+	 * 계정을 잠그는 로직 실행
+	 * 
+	 * @param username
+	 */
 	void lockAccount(String username);
 	
 }

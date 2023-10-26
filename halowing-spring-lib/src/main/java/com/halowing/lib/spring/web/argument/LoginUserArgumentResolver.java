@@ -1,23 +1,20 @@
 package com.halowing.lib.spring.web.argument;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.halowing.lib.spring.security.LoginUser;
-import com.halowing.lib.spring.security.UserService;
+import com.halowing.lib.spring.security.SimpleUserDetails;
 
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
 	
-	private final UserService userService;
-
-	public LoginUserArgumentResolver(UserService userService) {
-		this.userService = userService;
-	}
+	private static final Logger log = LoggerFactory.getLogger(LoginUserArgumentResolver.class);	
 
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
@@ -30,11 +27,13 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
 			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 		
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		UserDetails userDetails = (UserDetails) principal;
+		log.info("principal ={}",principal);
 		
-		String userName = userDetails.getUsername();
+		SimpleUserDetails userDetails = (SimpleUserDetails) principal;
 		
-		LoginUser loginUser = userService.getLoginUser(userName);
+		
+		LoginUser loginUser = new LoginUser(userDetails);
+		
 		
 		return loginUser;
 	}

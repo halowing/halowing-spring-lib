@@ -1,49 +1,80 @@
 package com.halowing.lib.spring.security;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Objects;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class SimpleUserDetails implements UserDetails{
+public class SimpleUserDetails extends LoginUser implements UserDetails{
 
 	private static final long serialVersionUID = 1L;
 	
-	private String username;
-	private String password;
-	private Collection<? extends GrantedAuthority> authorities;
-	private boolean accountNonExpired = false;
-	private boolean accountNonLocked = false;
-	private boolean credentialsNonExpired = false;
-	private boolean enabled = false;
+	private static final String ROLE_PRIFIX = "ROLE_";
+	
+	private final String username;
+	private final String password;
+	private final Set<GrantedAuthority> authorities = new HashSet<>();
+	private final boolean accountNonExpired;
+	private final boolean accountNonLocked;
+	private final boolean credentialsNonExpired;
+	private final boolean enabled;
+	
+	public SimpleUserDetails(LoginUser loginUser) {
+		this.username = loginUser.getUsername();
+		this.password = loginUser.getPassword();
+		this.enabled  = loginUser.isEnabled();
+		
+		final LocalDateTime accountExpiredDateTime 			= loginUser.getAccountExpiredDateTime();
+		
+		final boolean locked								= loginUser.isLocked();
+		final int loginFailureCount 						= loginUser.getLoginFailureCount();
+		final LocalDateTime lastLoginDateTime 				= loginUser.getLastLoginDateTime();
+		final LocalDateTime credentialUpdateDateTime		= loginUser.getCredentialUpdateDateTime();
+		
+		final Integer loginFailureLimit 					= loginUser.getLoginFailureLimit();
+		final Integer credentialsExpiredLimit 				= loginUser.getCredentialsExpiredLimit();
+		final Integer lastLoginLimit						= loginUser.getLastLoginLimit();
+		
+		
+		setAccountExpiredDateTime(accountExpiredDateTime);
+		setLocked(locked);
+		setLastLoginDateTime(lastLoginDateTime);
+		setCredentialUpdateDateTime(credentialUpdateDateTime);
+		setLoginFailureCount(loginFailureCount);
+		setName(loginUser.getName());
+		setImageUrl(loginUser.getImageUrl());
+		setProfileUrl(loginUser.getProfileUrl());
+		setRegistDateTime(loginUser.getRegistDateTime());
+		setUpdateDateTime(loginUser.getUpdateDateTime());
+		setRoles(loginUser.getRoles());
+		
+		this.accountNonExpired = accountExpiredDateTime == null ? true : accountExpiredDateTime.isAfter(LocalDateTime.now()) ;
+		this.accountNonLocked  = locked ? false
+					: (loginFailureLimit != null && loginFailureCount > loginFailureLimit )? false 
+					: (lastLoginLimit    != null && LocalDateTime.now().minusDays(lastLoginLimit).isAfter(lastLoginDateTime) )? false
+					: true
+						;
+		this.credentialsNonExpired = credentialsExpiredLimit == null ? true 
+				: credentialUpdateDateTime == null ? false
+				: LocalDateTime.now().minusDays(credentialsExpiredLimit).isBefore(credentialUpdateDateTime)
+				;
+		final Set<String> roles = loginUser.getRoles();
+		roles.forEach(role -> {
+			SimpleGrantedAuthority authority = new SimpleGrantedAuthority(ROLE_PRIFIX + role);
+			authorities.add(authority );
+		});
+		
+	}
 	
 	@Override
 	public String toString() {
-		return "DefaultUserDetails [username=" + username + ", password=" + password + ", authorities=" + authorities
+		return "SimpleUserDetails [username=" + username + ", password=" + password + ", authorities=" + authorities
 				+ ", accountNonExpired=" + accountNonExpired + ", accountNonLocked=" + accountNonLocked
 				+ ", credentialsNonExpired=" + credentialsNonExpired + ", enabled=" + enabled + "]";
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(accountNonExpired, accountNonLocked, authorities, credentialsNonExpired, enabled, password,
-				username);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SimpleUserDetails other = (SimpleUserDetails) obj;
-		return accountNonExpired == other.accountNonExpired && accountNonLocked == other.accountNonLocked
-				&& Objects.equals(authorities, other.authorities)
-				&& credentialsNonExpired == other.credentialsNonExpired && enabled == other.enabled
-				&& Objects.equals(password, other.password) && Objects.equals(username, other.username);
 	}
 
 	@Override
@@ -79,34 +110,6 @@ public class SimpleUserDetails implements UserDetails{
 	@Override
 	public boolean isEnabled() {
 		return enabled;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
-		this.authorities = authorities;
-	}
-
-	public void setAccountNonExpired(boolean accountNonExpired) {
-		this.accountNonExpired = accountNonExpired;
-	}
-
-	public void setAccountNonLocked(boolean accountNonLocked) {
-		this.accountNonLocked = accountNonLocked;
-	}
-
-	public void setCredentialsNonExpired(boolean credentialsNonExpired) {
-		this.credentialsNonExpired = credentialsNonExpired;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
 	}
 
 }
