@@ -5,7 +5,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.hibernate.validator.constraints.URL;
-import org.springframework.validation.annotation.Validated;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +15,7 @@ import jakarta.validation.constraints.NotNull;
  * 로그인한 User의 정보
  *
  */
-@Validated
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LoginUser {
 
 	@NotBlank
