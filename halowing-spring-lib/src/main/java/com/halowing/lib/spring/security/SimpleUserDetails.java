@@ -13,7 +13,7 @@ public class SimpleUserDetails extends LoginUser implements UserDetails{
 
 	private static final long serialVersionUID = 1L;
 	
-//	private static final String ROLE_PRIFIX = "ROLE_"; 
+	private static final String ROLE_PRIFIX = "ROLE_"; 
 	
 	private final String username;
 	private final String password;
@@ -65,7 +65,7 @@ public class SimpleUserDetails extends LoginUser implements UserDetails{
 		final Set<String> roles = loginUser.getRoles();
 		roles.forEach(role -> {
 			SimpleGrantedAuthority authority = new SimpleGrantedAuthority(
-//					ROLE_PRIFIX + 
+					ROLE_PRIFIX + 
 					role);
 			authorities.add(authority );
 		});
