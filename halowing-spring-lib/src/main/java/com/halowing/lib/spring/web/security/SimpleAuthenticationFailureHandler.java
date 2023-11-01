@@ -18,32 +18,37 @@ public class SimpleAuthenticationFailureHandler implements AuthenticationFailure
 	
 	private final static Logger log = LoggerFactory.getLogger(SimpleAuthenticationFailureHandler.class);
 
-	private static final String DEFAULT_LOGIN_URL = "/login.html";
+	private static final String DEFAULT_LOGIN_URL = "/login.html?error";
 	
 	private final UserService userService;
-	private final String loginUrl;
+	private final String failureRedirectUrl;
+	
+	public SimpleAuthenticationFailureHandler(
+			UserService userService) {
+		this(userService, null);
+	}
 
 	public SimpleAuthenticationFailureHandler(
 			UserService userService, 
-			String loginUrl) {
+			String failureRedirectUrl) {
 		this.userService = userService;
-		this.loginUrl = StringUtility.isBlank(loginUrl) ? DEFAULT_LOGIN_URL : loginUrl;
+		this.failureRedirectUrl = StringUtility.isBlank(failureRedirectUrl) ? DEFAULT_LOGIN_URL : failureRedirectUrl;
 	}
 
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException exception) throws IOException, ServletException {
 
-		
-		response.sendRedirect(request.getContextPath()+ loginUrl);
-		
 		String username = request.getParameter("username");
 		log.debug("username = {}",username);
 		
-		if(StringUtility.isBlank(username))
-			return;
+		if(!StringUtility.isBlank(username)){
+			userService.lockAccount(username);
+		}
 		
-		userService.lockAccount(username);
+		String url = request.getContextPath() + failureRedirectUrl;
+		
+		response.sendRedirect(url);
 	}
 
 }
