@@ -14,12 +14,9 @@ public class SimplePerformanceMessageResponse extends SimpleMessageResponse impl
 	@JsonIgnore
 	private LocalDateTime responseDatetime;
 	
-	public SimplePerformanceMessageResponse(String message) {
-		super(message);
+	public SimplePerformanceMessageResponse(String code, String... args) {
+		super(code, args);
 	}
-	
-	
-	
 
 	@Override
 	public String toString() {

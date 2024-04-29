@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 
+import com.halowing.lib.spring.exception.ExceptionMessage;
 import com.halowing.lib.spring.security.LoginUser;
 import com.halowing.lib.spring.web.exception.AbstractSpringWebApplicationException;
 import com.halowing.lib.spring.web.response.HttpMessageCode;
@@ -24,7 +25,7 @@ public class AuthorizedException extends AbstractSpringWebApplicationException {
 	private final String[] args;
 	
 	public AuthorizedException(LoginUser loginUser ) {
-		super(getConstructMessage(HttpMessageCode.UNAUTHORIZED,getArgs(loginUser) ) );
+		super(ExceptionMessage.getMessage(HttpMessageCode.UNAUTHORIZED.getMessageCode(), getArgs(loginUser) ) );
 		this.httpStatus = HttpStatus.UNAUTHORIZED;
 		this.errorCode  = HttpMessageCode.UNAUTHORIZED.getMessageCode();
 		this.loginUser = loginUser;
@@ -32,7 +33,7 @@ public class AuthorizedException extends AbstractSpringWebApplicationException {
 	}
 	
 	public AuthorizedException(String username, Set<String> roles ) {
-		super(getConstructMessage(HttpMessageCode.UNAUTHORIZED, getArgs(username, roles) ) );
+		super(ExceptionMessage.getMessage(HttpMessageCode.UNAUTHORIZED.getMessageCode(), getArgs(username, roles) ) );
 		this.httpStatus = HttpStatus.UNAUTHORIZED;
 		this.errorCode  = HttpMessageCode.UNAUTHORIZED.getMessageCode();
 		this.loginUser = getLoginUser(username, roles);

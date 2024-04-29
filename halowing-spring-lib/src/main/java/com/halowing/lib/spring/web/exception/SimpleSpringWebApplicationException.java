@@ -4,9 +4,10 @@ import org.springframework.http.HttpStatus;
 
 import com.halowing.lib.exception.ApplicationException;
 import com.halowing.lib.spring.exception.AbstractSpringApplicationException;
+import com.halowing.lib.spring.exception.ExceptionMessage;
 import com.halowing.lib.web.exception.WebApplicationException;
 
-public class SimpleSpringWebApplicationException extends AbstractSpringWebApplicationException {
+public final class SimpleSpringWebApplicationException extends AbstractSpringWebApplicationException {
 
 	private static final long serialVersionUID = 7114663106352785209L;
 	
@@ -16,7 +17,7 @@ public class SimpleSpringWebApplicationException extends AbstractSpringWebApplic
 
 	
 	public SimpleSpringWebApplicationException(String errorCode, String... args){
-		super(getConstructMessage(errorCode, args));
+		super( ExceptionMessage.getMessage(errorCode, args) );
 		
 		this.httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 		this.errorCode = errorCode;
@@ -24,7 +25,7 @@ public class SimpleSpringWebApplicationException extends AbstractSpringWebApplic
 	}
 	
 	public SimpleSpringWebApplicationException(HttpStatus httpStatus, String errorCode, String... args){
-		super(getConstructMessage(errorCode, args));
+		super(ExceptionMessage.getMessage(errorCode, args));
 		
 		this.httpStatus = httpStatus;
 		this.errorCode = errorCode;

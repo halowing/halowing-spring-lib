@@ -2,6 +2,7 @@ package com.halowing.lib.spring.web.security.exception;
 
 import org.springframework.http.HttpStatus;
 
+import com.halowing.lib.spring.exception.ExceptionMessage;
 import com.halowing.lib.spring.security.LoginUser;
 import com.halowing.lib.spring.web.exception.AbstractSpringWebApplicationException;
 import com.halowing.lib.spring.web.response.HttpMessageCode;
@@ -22,7 +23,7 @@ public class AuthenticationException extends AbstractSpringWebApplicationExcepti
 	private final String[] args;
 	
 	public AuthenticationException(LoginUser loginUser ) {
-		super(getConstructMessage(HttpMessageCode.UNAUTHENTICATED,getArgs(loginUser) ) );
+		super(ExceptionMessage.getMessage(HttpMessageCode.UNAUTHENTICATED.getMessageCode(),getArgs(loginUser) ) );
 		this.httpStatus = HttpStatus.UNAUTHORIZED;
 		this.errorCode  = HttpMessageCode.UNAUTHENTICATED.getMessageCode();
 		this.loginUser = loginUser;
@@ -30,7 +31,7 @@ public class AuthenticationException extends AbstractSpringWebApplicationExcepti
 	}
 	
 	public AuthenticationException(String username ) {
-		super(getConstructMessage(HttpMessageCode.UNAUTHENTICATED, getArgs(username) ) );
+		super(ExceptionMessage.getMessage(HttpMessageCode.UNAUTHENTICATED.getMessageCode(), getArgs(username) ) );
 		this.httpStatus = HttpStatus.UNAUTHORIZED;
 		this.errorCode  = HttpMessageCode.UNAUTHENTICATED.getMessageCode();
 		this.loginUser = getLoginUser(username);

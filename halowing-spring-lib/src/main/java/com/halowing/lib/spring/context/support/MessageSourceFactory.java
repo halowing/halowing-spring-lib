@@ -1,57 +1,69 @@
 package com.halowing.lib.spring.context.support;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.DelegatingMessageSource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.stereotype.Component;
 
-@Component
+import com.halowing.lib.exception.DefaultApplicationException;
+import com.halowing.lib.string.StringUtility;
+
+import jakarta.validation.constraints.NotBlank;
+
+/**
+ * 
+ */
 public class MessageSourceFactory {
 
-	private static final Logger log = LoggerFactory.getLogger(MessageSourceFactory.class);
+	public static final String DEFAULT_ENCODING = "UTF-8";
+	public static final int DEFAULT_CACHE_SECOND = 60;
+	public static final String[] BASE_NAMES = new String[] 
+			{"classpath:/messages/messages", "classpath:/messages/http","classpath:/messages/http-status-message"} ;
 	
-	private static final String[] basenames = new String[] 
-			{"classpath:/messages/messages", "classpath:/messages/http"} ;
+	private static final ReloadableResourceBundleMessageSource DEFAULT_MESSAGE_SOURCE =  defaultMessageSource();;
 	
-	private static MessageSource messageSource = null;
+	private static final Map<String, MessageSource> CUSTOM_MESSAGE_SOURCE_MAP = new ConcurrentHashMap<>();
 	
-	private static MessageSource defaMessageSource = defaultMessageSource();
 	
-	public MessageSourceFactory(@Autowired MessageSource messageSource) {
-		log.debug("MessageSource is {}:",messageSource.getClass() );
+	/**
+	 * 
+	 * @param customMessageSource
+	 */
+	public void messageSource(@NotBlank String name, MessageSource customMessageSource) {
 		
-		if(messageSource instanceof DelegatingMessageSource)
+		if (customMessageSource == null || customMessageSource instanceof DelegatingMessageSource)
 			return;
-		
-		MessageSourceFactory.messageSource = messageSource;
+		else if(CUSTOM_MESSAGE_SOURCE_MAP.containsKey(name))
+			throw new DefaultApplicationException("name is duplicated. name is " + name);
+		else
+			CUSTOM_MESSAGE_SOURCE_MAP.put(name, customMessageSource);
 	}
 	
-	private static MessageSource defaultMessageSource() {
-		
-		ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
-		ms.setBasenames(basenames);
-		ms.setDefaultEncoding("UTF-8");
-		ms.setCacheSeconds(60);
-		return ms;
+	public static  MessageSource getMessageSource() {
+		return getMessageSource(null);
 	}
-
-	public static MessageSource getMessageSource() {
+	
+	public static  MessageSource getMessageSource(String name) {
 		
-		if(messageSource != null)
-			return messageSource;
-		
-		synchronized (basenames) {
-			if(messageSource != null)
-				return messageSource;
-			
-			log.debug("Call defaultMessageSource.");
-			return defaMessageSource;
-		}
+		if(StringUtility.isBlank(name))
+			return DEFAULT_MESSAGE_SOURCE;
+		else if(CUSTOM_MESSAGE_SOURCE_MAP.containsKey(name))
+			return CUSTOM_MESSAGE_SOURCE_MAP.get(name);
+		else
+			throw new DefaultApplicationException("Requested MessageSource does not contain. name = " + name);
 		
 	}
 	
+	private static ReloadableResourceBundleMessageSource defaultMessageSource() {
+		
+		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+		messageSource.setBasenames(BASE_NAMES);
+		messageSource.setDefaultEncoding(DEFAULT_ENCODING);
+		messageSource.setCacheSeconds(DEFAULT_CACHE_SECOND);
+		messageSource.setUseCodeAsDefaultMessage(true);
+		return messageSource;
+	}
 
 }

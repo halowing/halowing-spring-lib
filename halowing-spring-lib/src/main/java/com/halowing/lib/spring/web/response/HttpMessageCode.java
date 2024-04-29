@@ -6,6 +6,7 @@ public enum HttpMessageCode {
 	UPDATED("http.method.updated.success"),
 	UNAUTHENTICATED("http.status.unauthenticated"),
 	UNAUTHORIZED("http.status.unauthorized"),
+	NOT_FOUND("http.status.not_found_error")
 	
 	;
 	

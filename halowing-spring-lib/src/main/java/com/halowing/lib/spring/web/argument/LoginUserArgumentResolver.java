@@ -27,14 +27,21 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
 			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 		
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		log.info("principal ={}",principal);
+		log.debug("principal ={}",principal.toString());
 		
-		SimpleUserDetails userDetails = (SimpleUserDetails) principal;
+		LoginUser loginUser  = null;
 		
-		
-		LoginUser loginUser = new LoginUser(userDetails);
-		
-		
+		if(principal instanceof SimpleUserDetails) {
+			SimpleUserDetails userDetails = (SimpleUserDetails) principal;
+			loginUser = new LoginUser(userDetails);
+		} else if (principal instanceof String) {
+			loginUser = new LoginUser();
+			loginUser.setUsername((String) principal);
+					
+		} else {
+			loginUser = new LoginUser();
+			loginUser.setUsername("anonymousUser");
+		}
 		return loginUser;
 	}
 
