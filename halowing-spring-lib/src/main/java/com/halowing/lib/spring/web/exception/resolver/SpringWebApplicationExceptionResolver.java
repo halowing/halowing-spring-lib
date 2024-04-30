@@ -29,7 +29,7 @@ public class SpringWebApplicationExceptionResolver extends AbstractHandlerExcept
 	
 	@Autowired
 	private MessageSourceAccessor messageSourceAccessor;
-
+	
 	@Override
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
 			Exception ex) {
@@ -47,7 +47,7 @@ public class SpringWebApplicationExceptionResolver extends AbstractHandlerExcept
 		ModelAndView mav = new ModelAndView(new MappingJackson2JsonView());
 		mav.setStatus(ex.getHttpStatus());
 		mav.addObject("status",ex.getHttpStatus().value());
-		mav.addObject("messages",getMessages(ex, localeResolver.resolveLocale(request)));
+		mav.addObject("error",getMessages(ex, localeResolver.resolveLocale(request)));
 		mav.addObject("timestamp",LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 		mav.addObject("path",request.getRequestURI());
 		return mav;
