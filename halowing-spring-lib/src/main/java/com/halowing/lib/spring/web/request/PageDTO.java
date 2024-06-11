@@ -17,8 +17,9 @@ public class PageDTO implements Serializable{
 	
 	private Long totalCount;
 	
-	@Min(value = 0)
-	private Integer page;
+	@NotNull
+	@Min(value = 1)
+	private Integer pageNumber;
 
 	@NotNull
 	@Min(value = 1)
@@ -27,13 +28,11 @@ public class PageDTO implements Serializable{
 	public void setLimit(Integer limit) {
 		this.pageSize = limit;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "PageDTO [totalCount=" + totalCount + ", page=" + page + ", pageSize=" + pageSize + "]";
+		return "PageDTO [totalCount=" + totalCount + ", pageNumber=" + pageNumber + ", pageSize=" + pageSize + "]";
 	}
-
-
 
 	public Long getTotalCount() {
 		return totalCount;
@@ -43,12 +42,12 @@ public class PageDTO implements Serializable{
 		this.totalCount = totalCount;
 	}
 
-	public Integer getPage() {
-		return this.page;
+	public Integer getPageNumber() {
+		return pageNumber;
 	}
 
-	public void setPage(Integer page) {
-		this.page = page;
+	public void setPageNumber(Integer pageNumber) {
+		this.pageNumber = pageNumber;
 	}
 
 	public Integer getPageSize() {
@@ -58,5 +57,4 @@ public class PageDTO implements Serializable{
 	public void setPageSize(Integer pageSize) {
 		this.pageSize = pageSize;
 	}
-
 }
