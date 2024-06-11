@@ -3,37 +3,42 @@ package com.halowing.lib.spring.web.response;
 import java.io.Serializable;
 import java.util.List;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.halowing.lib.spring.web.request.PageDTO;
 
 import jakarta.validation.constraints.NotNull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SearchResponseDTO<E> implements Serializable{
+public class SearchResponseDTO<T,V> implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
 	@NotNull
-	private List<E> data;
+	private List<T> contents;
 	
 	@NotNull
 	private PageDTO page;
 	
 	@NotNull
-	private E request;
+	private V searchCriteria;
+	
+	public SearchResponseDTO(@NotNull PageDTO page, @NotNull V searchCriteria) {
+		this.page = page;
+		this.searchCriteria = searchCriteria;
+	}
 
 	@Override
 	public String toString() {
-		return "SearchResponseDTO [data=" + data + ", page=" + page + ", request=" + request + "]";
+		return "SearchResponseDTO [contents=" + contents + ", page=" + page + ", searchCriteria=" + searchCriteria
+				+ "]";
 	}
 
-	public List<E> getData() {
-		return data;
+	public List<T> getContents() {
+		return contents;
 	}
 
-	public void setData(List<E> data) {
-		this.data = data;
+	public void setContents(List<T> contents) {
+		this.contents = contents;
 	}
 
 	public PageDTO getPage() {
@@ -44,14 +49,11 @@ public class SearchResponseDTO<E> implements Serializable{
 		this.page = page;
 	}
 
-	public E getRequest() {
-		return request;
+	public V getSearchCriteria() {
+		return searchCriteria;
 	}
 
-	public void setRequest(E request) {
-		this.request = request;
+	public void setSearchCriteria(V searchCriteria) {
+		this.searchCriteria = searchCriteria;
 	}
-	
-
-	
 }
