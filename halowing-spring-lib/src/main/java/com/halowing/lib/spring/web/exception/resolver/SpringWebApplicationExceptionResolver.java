@@ -56,7 +56,7 @@ public class SpringWebApplicationExceptionResolver extends AbstractHandlerExcept
 	protected List<String> getMessages(AbstractSpringWebApplicationException ex, Locale locale){
 		
 		List<String> list = new ArrayList<>();
-		String message = messageSourceAccessor.getMessage(ex.getErrorCode(), ex.getArgs(), locale);
+		String message = messageSourceAccessor.getMessage(ex.getErrorCode(), ex.getArgs(), ex.getMessage(),locale);
 		
 		log.debug("Locale = {}, error message = {}", locale, message);
 		list.add(message);
