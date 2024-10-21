@@ -1,12 +1,12 @@
 plugins {
 	id 'java-library'
-	id 'org.springframework.boot' version '3.3.2'
+	id 'org.springframework.boot' version '3.3.4'
 	id 'io.spring.dependency-management' version '1.1.5'
 	id 'maven-publish'
 }
 
 group = 'com.halowing.lib'
-version = '3.3.1-SNAPSHOT'
+version = '3.3.2-SNAPSHOT'
 
 java {
 	sourceCompatibility = '17'
@@ -97,7 +97,7 @@ dependencies {
 	
 	compileOnly 'com.halowing.lib:halowing-base-lib:0.0.4-SNAPSHOT'
 	compileOnly 'com.halowing.lib:halowing-network-lib:0.0.2-SNAPSHOT'
-	
+
 	testImplementation 'ch.qos.logback:logback-classic:1.3.11'
 	
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
