@@ -1,7 +1,7 @@
 plugins {
 	id 'java-library'
-	id 'org.springframework.boot' version '3.3.4'
-	id 'io.spring.dependency-management' version '1.1.5'
+	id 'org.springframework.boot' version '3.3.13'
+	id 'io.spring.dependency-management' version '1.1.7'
 	id 'maven-publish'
 }
 
@@ -9,7 +9,9 @@ group = 'com.halowing.lib'
 version = '3.3.2-SNAPSHOT'
 
 java {
-	sourceCompatibility = '17'
+	toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 	withSourcesJar()
 }
 
@@ -31,8 +33,10 @@ publishing {
             	description = 'Utilities for web Application maded by halowing.'
             	url = 'https://github.com/halowing/halowing-spring-lib'
             	licenses{
-            		name = 'Apache License, Version 2.0'
-                  	url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            		license {
+            			name = 'Apache License, Version 2.0'
+                  		url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            		}
             	}
             	developers {
             		developer {
@@ -54,8 +58,8 @@ publishing {
    			name = "GitHubPacakges"
     		url = uri("https://maven.pkg.github.com/halowing/halowing-spring-lib") 
     		credentials {
-    			username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-    			password = project.findProperty("gpr.key")  ?: System.getenv("TOKEN")
+    			username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+    			password = project.findProperty("gpr.key")  ?: System.getenv("GITHUB_TOKEN")
     		}
     	}
     }
@@ -63,20 +67,20 @@ publishing {
 
 repositories {
 	
-	mavenLocal()
 	mavenCentral()
+	mavenLocal()
 	maven {
 		url = uri("https://maven.pkg.github.com/halowing/halowing-base-lib")
 		credentials {
-			username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-			password = project.findProperty("gpr.key")  ?: System.getenv("TOKEN")
+			username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+			password = project.findProperty("gpr.key")  ?: System.getenv("GITHUB_TOKEN")
 		}
 	}
 	maven {
 		url = uri("https://maven.pkg.github.com/halowing/halowing-network-lib")
 		credentials {
-			username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-			password = project.findProperty("gpr.key")  ?: System.getenv("TOKEN")
+			username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+			password = project.findProperty("gpr.key")  ?: System.getenv("GITHUB_TOKEN")
 		}
 	}
 	
