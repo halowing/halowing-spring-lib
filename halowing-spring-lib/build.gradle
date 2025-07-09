@@ -55,7 +55,7 @@ publishing {
     
     repositories {
    		maven {
-   			name = "GitHubPacakges"
+   			name = "HalowingSpringbootLibRepo"
     		url = uri("https://maven.pkg.github.com/halowing/halowing-spring-lib") 
     		credentials {
     			username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
