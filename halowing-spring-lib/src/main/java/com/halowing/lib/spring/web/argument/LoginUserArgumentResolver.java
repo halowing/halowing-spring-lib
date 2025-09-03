@@ -1,9 +1,13 @@
 package com.halowing.lib.spring.web.argument;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -33,8 +37,20 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
 		
 		if(principal instanceof SimpleUserDetails) {
 			SimpleUserDetails userDetails = (SimpleUserDetails) principal;
-			loginUser = new LoginUser(userDetails);
-		} else if (principal instanceof String) {
+			loginUser = userDetails.getLoginUser();
+		}  else if (principal instanceof UserDetails) {
+			UserDetails user = (UserDetails) principal;
+			
+			Set<String> roles = new HashSet<>();
+			user.getAuthorities().forEach(auth -> {
+				if(auth != null) {
+					roles.add((auth.getAuthority().replace(SimpleUserDetails.ROLE_PRIFIX, "")));
+				}
+			});
+			
+			loginUser = new LoginUser(user.getUsername(),user.getPassword(),roles );
+					
+		}else if (principal instanceof String) {
 			loginUser = new LoginUser();
 			loginUser.setUsername((String) principal);
 					

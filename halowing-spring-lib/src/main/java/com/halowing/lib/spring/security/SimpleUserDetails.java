@@ -1,117 +1,93 @@
 package com.halowing.lib.spring.security;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.util.Assert;
 
-public class SimpleUserDetails extends LoginUser implements UserDetails{
+/**
+ * UserDetail service  구현체. UserDetailsService에서 사용.
+ */
+public class SimpleUserDetails extends User{
 
 	private static final long serialVersionUID = 1L;
 	
-	private static final String ROLE_PRIFIX = "ROLE_"; 
+	public static final String ROLE_PRIFIX = "ROLE_"; 
 	
-	private final String username;
-	private final String password;
-	private final Set<GrantedAuthority> authorities = new HashSet<>();
-	private final boolean accountNonExpired;
-	private final boolean accountNonLocked;
-	private final boolean credentialsNonExpired;
-	private final boolean enabled;
+	private final LoginUser loginUser;
 	
 	public SimpleUserDetails(LoginUser loginUser) {
-		this.username = loginUser.getUsername();
-		this.password = loginUser.getPassword();
-		this.enabled  = loginUser.isEnabled();
-		
+		super(
+				loginUser.getUsername(), 
+				loginUser.getPassword(),
+				loginUser.isEnabled(),
+				credentialsNonExpired(loginUser),
+				accountNonExpired(loginUser),
+				accountNonLocked(loginUser),
+				authorities( loginUser.getRoles()) 
+				);
+		this.loginUser = loginUser;
+	}
+	
+	private static boolean accountNonLocked(LoginUser loginUser) {
 		final LocalDateTime accountExpiredDateTime 			= loginUser.getAccountExpiredDateTime();
+		return accountExpiredDateTime == null ? true : accountExpiredDateTime.isAfter(LocalDateTime.now()) ;
+	}
+
+	private static boolean accountNonExpired(LoginUser loginUser) {
 		
-		final boolean locked								= loginUser.isLocked();
-		final int loginFailureCount 						= loginUser.getLoginFailureCount();
-		final LocalDateTime lastLoginDateTime 				= loginUser.getLastLoginDateTime();
-		final LocalDateTime credentialUpdateDateTime		= loginUser.getCredentialUpdateDateTime();
+		boolean locked								= loginUser.isLocked();
+		Integer loginFailureLimit 					= loginUser.getLoginFailureLimit();
+		int loginFailureCount 						= loginUser.getLoginFailureCount();
+		Integer lastLoginLimit						= loginUser.getLastLoginLimit();
 		
-		final Integer loginFailureLimit 					= loginUser.getLoginFailureLimit();
-		final Integer credentialsExpiredLimit 				= loginUser.getCredentialsExpiredLimit();
-		final Integer lastLoginLimit						= loginUser.getLastLoginLimit();
+		LocalDateTime lastLoginDateTime 				= loginUser.getLastLoginDateTime();
 		
+		return locked ? false
+				: (loginFailureLimit != null && loginFailureCount > loginFailureLimit )? false 
+				: (lastLoginLimit    != null && LocalDateTime.now().minusDays(lastLoginLimit).isAfter(lastLoginDateTime) )? false
+				: true
+					;
+	}
+
+	private static boolean credentialsNonExpired(LoginUser loginUser) {
+		Integer credentialsExpiredLimit 				= loginUser.getCredentialsExpiredLimit();
+		LocalDateTime credentialUpdateDateTime		= loginUser.getCredentialUpdateDateTime();
 		
-		setAccountExpiredDateTime(accountExpiredDateTime);
-		setLocked(locked);
-		setLastLoginDateTime(lastLoginDateTime);
-		setCredentialUpdateDateTime(credentialUpdateDateTime);
-		setLoginFailureCount(loginFailureCount);
-		setName(loginUser.getName());
-		setImageUrl(loginUser.getImageUrl());
-		setProfileUrl(loginUser.getProfileUrl());
-		setRegistDateTime(loginUser.getRegistDateTime());
-		setUpdateDateTime(loginUser.getUpdateDateTime());
-		setRoles(loginUser.getRoles());
-		
-		this.accountNonExpired = accountExpiredDateTime == null ? true : accountExpiredDateTime.isAfter(LocalDateTime.now()) ;
-		this.accountNonLocked  = locked ? false
-					: (loginFailureLimit != null && loginFailureCount > loginFailureLimit )? false 
-					: (lastLoginLimit    != null && LocalDateTime.now().minusDays(lastLoginLimit).isAfter(lastLoginDateTime) )? false
-					: true
-						;
-		this.credentialsNonExpired = credentialsExpiredLimit == null ? true 
+		return credentialsExpiredLimit == null ? true 
 				: credentialUpdateDateTime == null ? false
 				: LocalDateTime.now().minusDays(credentialsExpiredLimit).isBefore(credentialUpdateDateTime)
 				;
-		final Set<String> roles = loginUser.getRoles();
-		roles.forEach(role -> {
-			SimpleGrantedAuthority authority = new SimpleGrantedAuthority(
-					ROLE_PRIFIX + 
-					role);
-			authorities.add(authority );
-		});
-		
-	}
-	
-	@Override
-	public String toString() {
-		return "SimpleUserDetails [username=" + username + ", password=" + password + ", authorities=" + authorities
-				+ ", accountNonExpired=" + accountNonExpired + ", accountNonLocked=" + accountNonLocked
-				+ ", credentialsNonExpired=" + credentialsNonExpired + ", enabled=" + enabled + "]";
 	}
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
+	private static Set<GrantedAuthority> authorities(Set<String> roles) {
+		Assert.notNull(roles, "Cannot pass a null String collection");
+		Set<GrantedAuthority> authorities = new HashSet<>();
+		roles.forEach(role -> {
+			if (role != null) {
+				SimpleGrantedAuthority authority = new SimpleGrantedAuthority(
+						ROLE_PRIFIX + 
+						role);
+				authorities.add(authority );
+			}
+		});
+		
 		return authorities;
 	}
 
-	@Override
-	public String getPassword() {
-		return password;
+
+	public LoginUser getLoginUser() {
+		return loginUser;
 	}
 
 	@Override
-	public String getUsername() {
-		return username;
+	public String toString() {
+		return "SimpleUserDetails [loginUser=" + loginUser.toString() + ", super()=" + super.toString() + "]";
 	}
-
-	@Override
-	public boolean isAccountNonExpired() {
-		return accountNonExpired;
-	}
-
-	@Override
-	public boolean isAccountNonLocked() {
-		return accountNonLocked;
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return credentialsNonExpired;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
-
+	
+	
 }

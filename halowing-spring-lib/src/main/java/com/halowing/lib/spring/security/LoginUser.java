@@ -6,8 +6,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.hibernate.validator.constraints.URL;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -15,7 +13,6 @@ import jakarta.validation.constraints.NotNull;
  * 로그인한 User의 정보
  *
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class LoginUser {
 
 	@NotBlank
@@ -48,50 +45,18 @@ public class LoginUser {
 	private boolean locked  = false;
 	
 	
-	private final Integer credentialsExpiredLimit;
-	private final Integer lastLoginLimit;
-	private final Integer loginFailureLimit;
+	private Integer credentialsExpiredLimit;
+	private Integer lastLoginLimit;
+	private Integer loginFailureLimit;
 	
-	public LoginUser() {
-		this(null, null, null);
+	public LoginUser() {}	
+	
+	public LoginUser(String username, String password, Set<String> roles) {
+		this.username = username;
+		this.password = password;
+		this.roles = roles;
 	}
 	
-	public LoginUser(
-			Integer loginFailureLimit,
-			Integer credentialsExpiredLimit,
-			Integer lastLoginLimit
-			){
-		this.loginFailureLimit = loginFailureLimit;
-		this.credentialsExpiredLimit = credentialsExpiredLimit;
-		this.lastLoginLimit = lastLoginLimit;
-	}
-
-	public LoginUser(SimpleUserDetails userDetails) {
-		this.username 					= userDetails.getUsername();
-		this.password 					= userDetails.getPassword();
-		this.name	  					= userDetails.getName();
-		
-		this.imageUrl 					= userDetails.getImageUrl();
-		this.profileUrl					= userDetails.getProfileUrl();
-		
-		this.registDateTime 			= userDetails.getRegistDateTime();
-		this.updateDateTime				= userDetails.getUpdateDateTime();
-		this.accountExpiredDateTime 	= userDetails.getAccountExpiredDateTime();
-		
-		this.enabled  					= userDetails.isEnabled();
-		this.locked						= userDetails.isLocked();
-		this.loginFailureCount 			= userDetails.getLoginFailureCount();
-		this.lastLoginDateTime 			= userDetails.getLastLoginDateTime();
-		this.credentialUpdateDateTime	= userDetails.getCredentialUpdateDateTime();
-		
-		this.loginFailureLimit 			= userDetails.getLoginFailureLimit();
-		this.credentialsExpiredLimit 	= userDetails.getCredentialsExpiredLimit();
-		this.lastLoginLimit				= userDetails.getLastLoginLimit();
-		
-		roles.addAll(userDetails.getRoles());
-		
-	}
-
 	@Override
 	public String toString() {
 		return "LoginUser [username=" + username + ", password=" + password + ", name=" + name + ", roles=" + roles
